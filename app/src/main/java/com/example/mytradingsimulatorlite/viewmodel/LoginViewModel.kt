@@ -30,8 +30,9 @@ class LoginViewModel : ViewModel() {
                 isLoading = true
                 PortfolioRepository.setAuth(username, password)
                 try {
-                    // Try to refresh portfolio to verify credentials
-                    PortfolioRepository.refreshPortfolio()
+                    // Try to fetch scenarios to verify credentials
+                    // refreshPortfolio() might fail if the user hasn't selected a scenario yet
+                    PortfolioRepository.getScenarios()
                     loginMessage = "Success!"
                     isLoggedIn = true
                 } catch (e: Exception) {
