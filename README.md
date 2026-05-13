@@ -11,3 +11,5 @@ A modern, lightweight Android stock trading simulator built with Jetpack Compose
 - **Networking**: [Retrofit](https://square.github.io/retrofit/) & [OkHttp](https://square.github.io/okhttp/)
 - **Architecture**: MVVM (Model-View-ViewModel) with Repository pattern.
 - **Backend**: Custom Trading API (communicating via `10.0.2.2:8080` for emulator access).
+
+![pages](ex.png)

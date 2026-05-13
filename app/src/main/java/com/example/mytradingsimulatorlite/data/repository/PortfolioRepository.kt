@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.mytradingsimulatorlite.data.model.*
 import com.example.mytradingsimulatorlite.data.network.RetrofitClient
+import org.json.JSONObject
+import retrofit2.HttpException
 
 object PortfolioRepository {
     private val apiService = RetrofitClient.instance
@@ -80,7 +82,18 @@ object PortfolioRepository {
             null
         } catch (e: Exception) {
             e.printStackTrace()
-            e.message ?: "Order failed"
+            if (e is HttpException) {
+                try {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    if (errorBody != null) {
+                        val json = JSONObject(errorBody)
+                        return json.optString("message", "Order failed")
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+            return e.message ?: "Order failed"
         }
     }
 }

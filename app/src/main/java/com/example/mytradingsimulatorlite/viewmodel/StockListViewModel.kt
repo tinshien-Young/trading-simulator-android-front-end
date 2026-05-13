@@ -39,7 +39,6 @@ class StockListViewModel : ViewModel() {
 
     init {
         refreshData()
-        startPriceUpdates()
     }
 
     fun refreshData() {
@@ -56,37 +55,21 @@ class StockListViewModel : ViewModel() {
         }
     }
 
-    private fun startPriceUpdates() {
-        viewModelScope.launch {
-            while (true) {
-                if (!isHistorical) { // Only auto-update if LIVE
-                    try {
-                        _stocks.value = repository.getStockList()
-                        errorMessage = null
-                    } catch (e: Exception) {
-                        handleError(e)
-                    }
-                }
-                delay(60000)
-            }
-        }
-    }
-
     private fun handleError(e: Exception) {
         e.printStackTrace()
         if (e is HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            if (errorBody != null) {
-                try {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (errorBody != null) {
                     val json = JSONObject(errorBody)
                     val message = json.optString("message")
                     if (message.contains("API credits", ignoreCase = true)) {
                         errorMessage = "Too many requests! Please wait a minute for the API limits to reset."
                         return
                     }
-                } catch (jsonEx: Exception) {
-                    jsonEx.printStackTrace()
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
         errorMessage = "Failed to load market data. Please check your connection."

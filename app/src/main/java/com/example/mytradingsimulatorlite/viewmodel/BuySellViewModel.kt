@@ -27,8 +27,14 @@ class BuySellViewModel : ViewModel() {
     fun loadPrice(symbol: String) {
         viewModelScope.launch {
             isLoading = true
-            val prices = stockRepository.getPrices()
-            currentPrice = prices.find { it.symbol == symbol }?.price ?: 0.0
+            try {
+                val prices = stockRepository.getPrices()
+                currentPrice = prices.find { it.symbol == symbol }?.price ?: 0.0
+                message = ""
+            } catch (e: Exception) {
+                e.printStackTrace()
+                message = "Failed to load price"
+            }
             isLoading = false
         }
     }
